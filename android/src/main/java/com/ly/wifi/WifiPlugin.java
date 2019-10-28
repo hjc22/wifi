@@ -48,6 +48,9 @@ public class WifiPlugin implements MethodCallHandler {
             case "ssid":
                 delegate.getSSID(call, result);
                 break;
+            case "bssid":
+                delegate.getSSID(call, result);
+                break;
             case "level":
                 delegate.getLevel(call, result);
                 break;
