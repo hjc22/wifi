@@ -23,7 +23,16 @@
         } else {
             result(wifiName);
         }
-    } else if ([@"level" isEqualToString:call.method]) {
+    } else if ([@"bssid" isEqualToString:call.method]) {
+        NSString *wifiName = [self getSSID];
+        if ([wifiName isEqualToString: @"Not Found"]) {
+            result([FlutterError errorWithCode:@"UNAVAILABLE"
+                                       message:@"wifi bssid unavailable"
+                                       details:nil]);
+        } else {
+            result(wifiName);
+        }
+    }else if ([@"level" isEqualToString:call.method]) {
         NSNumber *level = @([self getSignalStrength]);
         result(level);
     } else if ([@"ip" isEqualToString:call.method]) {
@@ -69,6 +78,19 @@
         }
     }
     return ssid;
+}
+
+- (NSString *) getBSSID {
+    NSString *bssid = @"Not Found";
+    CFArrayRef myArray = CNCopySupportedInterfaces();
+    if (myArray != nil) {
+        CFDictionaryRef myDict = CNCopyCurrentNetworkInfo(CFArrayGetValueAtIndex(myArray, 0));
+        if (myDict != nil) {
+            NSDictionary *dict = (NSDictionary*)CFBridgingRelease(myDict);
+            bssid = [dict valueForKey:@"BSSID"];
+        }
+    }
+    return bssid;
 }
 
 - (int)getSignalStrength{
