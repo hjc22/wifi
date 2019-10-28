@@ -24,7 +24,7 @@
             result(wifiName);
         }
     } else if ([@"bssid" isEqualToString:call.method]) {
-        NSString *wifiName = [self getSSID];
+        NSString *wifiName = [self getBSSID];
         if ([wifiName isEqualToString: @"Not Found"]) {
             result([FlutterError errorWithCode:@"UNAVAILABLE"
                                        message:@"wifi bssid unavailable"
