@@ -36,7 +36,7 @@ WifiDelegate implements PluginRegistry.RequestPermissionsResultListener {
     private PermissionManager permissionManager;
     private static final int REQUEST_ACCESS_FINE_LOCATION_PERMISSION = 1;
     private static final int REQUEST_CHANGE_WIFI_STATE_PERMISSION = 2;
-    NetworkChangeReceiver networkReceiver;
+    // NetworkChangeReceiver networkReceiver;
 
     interface PermissionManager {
         boolean isPermissionGranted(String permissionName);
@@ -68,7 +68,7 @@ WifiDelegate implements PluginRegistry.RequestPermissionsResultListener {
             MethodChannel.Result result,
             MethodCall methodCall,
             PermissionManager permissionManager) {
-        this.networkReceiver = new NetworkChangeReceiver();
+        // this.networkReceiver = new NetworkChangeReceiver();
         this.activity = activity;
         this.wifiManager = wifiManager;
         this.result = result;
@@ -240,29 +240,29 @@ WifiDelegate implements PluginRegistry.RequestPermissionsResultListener {
     }
 
     private void connection() {
-        String ssid = methodCall.argument("ssid");
-        String password = methodCall.argument("password");
-        WifiConfiguration wifiConfig = createWifiConfig(ssid, password);
-        if (wifiConfig == null) {
-            finishWithError("unavailable", "wifi config is null!");
-            return;
-        }
-        int netId = wifiManager.addNetwork(wifiConfig);
-        if (netId == -1) {
-            result.success(0);
-            clearMethodCallAndResult();
-        } else {
-            // support Android O
-            // https://stackoverflow.com/questions/50462987/android-o-wifimanager-enablenetwork-cannot-work
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                wifiManager.enableNetwork(netId, true);
-                wifiManager.reconnect();
-                result.success(1);
-                clearMethodCallAndResult();
-            } else {
-                networkReceiver.connect(netId);
-            }
-        }
+//         String ssid = methodCall.argument("ssid");
+//         String password = methodCall.argument("password");
+//         WifiConfiguration wifiConfig = createWifiConfig(ssid, password);
+//         if (wifiConfig == null) {
+//             finishWithError("unavailable", "wifi config is null!");
+//             return;
+//         }
+//         int netId = wifiManager.addNetwork(wifiConfig);
+//         if (netId == -1) {
+//             result.success(0);
+//             clearMethodCallAndResult();
+//         } else {
+//             // support Android O
+//             // https://stackoverflow.com/questions/50462987/android-o-wifimanager-enablenetwork-cannot-work
+//             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+//                 wifiManager.enableNetwork(netId, true);
+//                 wifiManager.reconnect();
+//                 result.success(1);
+//                 clearMethodCallAndResult();
+//             } else {
+//                 networkReceiver.connect(netId);
+//             }
+//         }
     }
 
     private WifiConfiguration createWifiConfig(String ssid, String Password) {
@@ -356,7 +356,7 @@ WifiDelegate implements PluginRegistry.RequestPermissionsResultListener {
         @Override
         public void onReceive(Context context, Intent intent) {
             NetworkInfo info = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
-            if (info.getState() == NetworkInfo.State.DISCONNECTED && willLink) {
+            if (info.getState() == NetworkInfo.State.DISCONNECTED && willLink && info != null) {
                 wifiManager.enableNetwork(netId, true);
                 wifiManager.reconnect();
                 result.success(1);
